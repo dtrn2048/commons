@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { t } from 'i18next';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, Package } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ import { flagsHooks } from '@/hooks/flags-hooks';
 import { platformHooks } from '@/hooks/platform-hooks';
 import {
   PieceMetadataModelSummary,
-  PropertyType,
+  PropertyType
 } from '@activepieces/pieces-framework';
 import { ApEdition, ApFlagId, PieceScope } from '@activepieces/shared';
 
@@ -30,19 +30,19 @@ import { TableTitle } from '../../../../../components/ui/table-title';
 const PlatformPiecesPage = () => {
   const { platform } = platformHooks.useCurrentPlatform();
   const { data: edition } = flagsHooks.useFlag<ApEdition>(ApFlagId.EDITION);
-  // In CE edition, we always enable piece management
-  // If edition is still loading (undefined), assume it's enabled for CE
+  // In CE edition we always enable piece management
+  // If edition is still loading (undefined) assume it's enabled for CE
   const isEnabled = !edition || edition === ApEdition.COMMUNITY ? true : platform.managePiecesEnabled;
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('name') ?? '';
   const {
     pieces,
     refetch: refetchPieces,
-    isLoading,
+    isLoading
   } = piecesHooks.usePieces({
     searchQuery,
     includeTags: true,
-    includeHidden: true,
+    includeHidden: true
   });
   const { refetch: refetchPiecesClientIdsMap } =
     oauth2AppsHooks.usePieceToClientIdMap(platform.cloudAuthEnabled, edition!);
@@ -69,7 +69,7 @@ const PlatformPiecesPage = () => {
                 row.toggleSelected(!!value);
               }}
             />
-          ),
+          )
         },
         {
           accessorKey: 'name',
@@ -89,7 +89,7 @@ const PlatformPiecesPage = () => {
                 />
               </div>
             );
-          },
+          }
         },
         {
           accessorKey: 'displayName',
@@ -98,7 +98,7 @@ const PlatformPiecesPage = () => {
           ),
           cell: ({ row }) => {
             return <div className="text-left">{row.original.displayName}</div>;
-          },
+          }
         },
         {
           accessorKey: 'packageName',
@@ -107,7 +107,7 @@ const PlatformPiecesPage = () => {
           ),
           cell: ({ row }) => {
             return <div className="text-left">{row.original.name}</div>;
-          },
+          }
         },
         {
           accessorKey: 'version',
@@ -116,7 +116,7 @@ const PlatformPiecesPage = () => {
           ),
           cell: ({ row }) => {
             return <div className="text-left">{row.original.version}</div>;
-          },
+          }
         },
         {
           accessorKey: 'tags',
@@ -133,7 +133,7 @@ const PlatformPiecesPage = () => {
                 </div>
               </div>
             );
-          },
+          }
         },
         {
           id: 'actions',
@@ -157,10 +157,10 @@ const PlatformPiecesPage = () => {
                 />
               </div>
             );
-          },
-        },
+          }
+        }
       ],
-      [],
+      []
     );
 
   const [selectedPieces, setSelectedPieces] = useState<
@@ -174,7 +174,7 @@ const PlatformPiecesPage = () => {
           <LockedAlert
             title={t('Control Pieces')}
             description={t(
-              "Show the pieces that matter most to your users and hide the ones you don't like.",
+              "Show the pieces that matter most to your users and hide the ones you don't like."
             )}
             button={
               <RequestTrial
@@ -184,28 +184,36 @@ const PlatformPiecesPage = () => {
             }
           />
         )}
-        <div className="mb-4">
-          <div className="flex mb-4">
-            <TableTitle>{t('Pieces')}</TableTitle>
-            <div className="ml-auto">
-              <div className="flex gap-3">
-                <ApplyTags
-                  selectedPieces={selectedPieces}
-                  onApplyTags={() => {
-                    refetchPieces();
-                  }}
-                ></ApplyTags>
-                <SyncPiecesButton />
-                <InstallPieceDialog
-                  onInstallPiece={() => refetchPieces()}
-                  scope={PieceScope.PLATFORM}
-                />
-              </div>
+        <div className="mb-4 flex">
+          <TableTitle
+            description={t(
+              'Manage the pieces that are available to your users'
+            )}
+          >
+            {t('Pieces')}
+          </TableTitle>
+          <div className="ml-auto">
+            <div className="flex gap-3">
+              <ApplyTags
+                selectedPieces={selectedPieces}
+                onApplyTags={() => {
+                  refetchPieces();
+                }}
+              ></ApplyTags>
+              <SyncPiecesButton />
+              <InstallPieceDialog
+                onInstallPiece={() => refetchPieces()}
+                scope={PieceScope.PLATFORM}
+              />
             </div>
           </div>
-          <SyncPiecesButton />
         </div>
         <DataTable
+          emptyStateTextTitle={t('No pieces found')}
+          emptyStateTextDescription={t(
+            'Start by installing pieces that you want to use in your automations'
+          )}
+          emptyStateIcon={<Package className="size-14" />}
           columns={columns}
           filters={[
             {
@@ -213,13 +221,13 @@ const PlatformPiecesPage = () => {
               title: t('Piece Name'),
               accessorKey: 'name',
               options: [],
-              icon: CheckIcon,
-            } as const,
+              icon: CheckIcon
+            } as const
           ]}
           page={{
             data: pieces ?? [],
             next: null,
-            previous: null,
+            previous: null
           }}
           isLoading={isLoading}
           onSelectedRowsChange={setSelectedPieces}
