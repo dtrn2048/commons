@@ -1,7 +1,10 @@
 import { ApplicationEventName, AuthenticationEvent, ConnectionEvent, FlowCreatedEvent, FlowDeletedEvent, FlowRunEvent, FolderEvent, GitRepoWithoutSensitiveData, ProjectMember, ProjectReleaseEvent, ProjectRoleEvent, SigningKeyEvent, SignUpEvent } from '@activepieces/ee-shared'
 import { PieceMetadata } from '@activepieces/pieces-framework'
 import { AppSystemProp, exceptionHandler, rejectedPromiseHandler } from '@activepieces/server-shared'
-import { ApEdition, ApEnvironment, AppConnectionWithoutSensitiveData, Flow, FlowRun, FlowTemplate, Folder, isNil, ProjectRelease, ProjectWithLimits, spreadIfDefined, UserInvitation } from '@activepieces/shared'
+import { ApEdition, ApEnvironment, AppConnectionWithoutSensitiveData, Flow, FlowRun, FlowTemplate, Folder, isNil, PieceSyncMode, ProjectRelease, ProjectWithLimits, spreadIfDefined, UserInvitation } from '@activepieces/shared'
+import { cmCeModule } from './ce/cm-ce.module'
+import { cmFlagsHooks } from './ce/flags/cm-flags.hooks'
+import { cmPieceMetadataServiceHooks } from './ce/pieces/cm-piece-metadata-service-hooks'
 import swagger from '@fastify/swagger'
 import { createAdapter } from '@socket.io/redis-adapter'
 import { FastifyInstance, FastifyRequest, HTTPMethods } from 'fastify'
@@ -219,7 +222,11 @@ export const setupApp = async (app: FastifyInstance): Promise<FastifyInstance> =
     await app.register(platformModule)
     await app.register(humanInputModule)
     await app.register(tagsModule)
+    
+    // Force piece sync on application startup
     await pieceSyncService(app.log).setup()
+    await pieceSyncService(app.log).sync()
+    
     await app.register(platformUserModule)
     await app.register(issuesModule)
     await app.register(alertsModule)
@@ -329,10 +336,14 @@ export const setupApp = async (app: FastifyInstance): Promise<FastifyInstance> =
             pieceMetadataServiceHooks.set(enterprisePieceMetadataServiceHooks)
             flagHooks.set(enterpriseFlagsHooks)
             break
-        case ApEdition.COMMUNITY:
-            await app.register(projectModule)
-            await app.register(communityPiecesModule)
-            await app.register(communityFlowTemplateModule)
+    case ApEdition.COMMUNITY:
+        await app.register(projectModule)
+        await app.register(communityPiecesModule)
+        await app.register(communityFlowTemplateModule)
+        await app.register(cmCeModule)
+        // Register our hooks
+        pieceMetadataServiceHooks.set(cmPieceMetadataServiceHooks)
+        flagHooks.set(cmFlagsHooks)
             break
     }
 

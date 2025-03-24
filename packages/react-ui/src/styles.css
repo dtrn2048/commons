@@ -3,6 +3,22 @@
 @import 'tailwindcss/utilities';
 /* You can add global styles to this file, and also import other style files */
 
+@font-face {
+  font-family: 'Geoform';
+  src: url('/assets/Geoform.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geoform';
+  src: url('/assets/Geoform-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
@@ -113,7 +129,13 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Geoform', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  h1, h2, h3, h4, h5, h6, strong, b, th {
+    font-family: 'Geoform', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: bold;
   }
 }
 

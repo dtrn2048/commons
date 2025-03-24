@@ -6,9 +6,9 @@ const FullLogo = () => {
   const branding = flagsHooks.useWebsiteBranding();
 
   return (
-    <div className="h-[60px]">
+    <div className="h-[35px] flex items-center justify-center">
       <img
-        className="h-full"
+        className="h-[35px] w-auto"
         src={branding.logos.fullLogoUrl}
         alt={t('logo')}
       />

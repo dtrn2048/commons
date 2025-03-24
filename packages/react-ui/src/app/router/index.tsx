@@ -56,6 +56,7 @@ import SettingsWorkersPage from '../routes/platform/infra/workers';
 import { PlatformMessages } from '../routes/platform/notifications/platform-messages';
 import ProjectsPage from '../routes/platform/projects';
 import AuditLogsPage from '../routes/platform/security/audit-logs';
+import { CmPlatformProjectsRoutes } from '@/ce/platform/projects/cm-platform-projects-routes';
 import { ProjectRolePage } from '../routes/platform/security/project-role';
 import { ProjectRoleUsersTable } from '../routes/platform/security/project-role/project-role-users-table';
 import { GlobalConnectionsTable } from '../routes/platform/setup/connections';
@@ -418,6 +419,16 @@ const routes = [
       <PlatformAdminContainer>
         <PageTitle title="Projects">
           <ProjectsPage />
+        </PageTitle>
+      </PlatformAdminContainer>
+    ),
+  },
+  {
+    path: '/platform/ce-projects/*',
+    element: (
+      <PlatformAdminContainer>
+        <PageTitle title="CE Projects">
+          <CmPlatformProjectsRoutes />
         </PageTitle>
       </PlatformAdminContainer>
     ),

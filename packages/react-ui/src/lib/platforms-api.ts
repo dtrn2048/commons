@@ -15,6 +15,14 @@ export const platformApi = {
     return api.get<PlatformWithoutSensitiveData>(`/v1/platforms/${platformId}`);
   },
 
+  syncPieces() {
+    const platformId = authenticationSession.getPlatformId();
+    if (!platformId) {
+      throw Error('No platform id found');
+    }
+    return api.post<void>(`/v1/ce/platform/pieces/sync`, {});
+  },
+
   verifyLicenseKey(licenseKey: string) {
     const platformId = authenticationSession.getPlatformId();
     if (!platformId) {

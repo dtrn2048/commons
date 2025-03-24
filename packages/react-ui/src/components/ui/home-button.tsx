@@ -32,7 +32,7 @@ const HomeButton = ({ route, showBackButton }: HomeButtonProps) => {
                 >
                   {!showBackButton && (
                     <img
-                      className="h-7 w-7 object-contain"
+                      className="h-7 w-7 object-contain mx-auto"
                       src={branding.logos.logoIconUrl}
                       alt={branding.websiteName}
                     />

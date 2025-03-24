@@ -76,6 +76,12 @@ const PieceActions = ({ pieceName, isEnabled }: PieceActionsProps) => {
 
   const filtered = platform.filteredPieceNames.includes(pieceName);
   const pinned = platform.pinnedPieces.includes(pieceName);
+  const behavior = platform.filteredPieceBehavior || 'BLOCKED';
+
+  // Determine if piece is visible based on filteredPieceNames and behavior
+  const isVisible = behavior === 'BLOCKED' 
+    ? !filtered // In BLOCKED mode, pieces not in the list are visible
+    : filtered; // In ALLOWED mode, pieces in the list are visible
 
   return (
     <div className="flex gap-2">
@@ -94,15 +100,15 @@ const PieceActions = ({ pieceName, isEnabled }: PieceActionsProps) => {
               togglePiece(pieceName);
             }}
           >
-            {filtered ? (
-              <EyeOff className="size-4" />
-            ) : (
+            {isVisible ? (
               <Eye className="size-4" />
+            ) : (
+              <EyeOff className="size-4" />
             )}
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          {filtered
+          {isVisible
             ? t('Hide this piece from all projects')
             : t('Show this piece for all projects')}
         </TooltipContent>

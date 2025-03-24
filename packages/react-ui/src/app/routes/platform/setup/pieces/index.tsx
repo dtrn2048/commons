@@ -29,7 +29,10 @@ import { ApEdition, ApFlagId, PieceScope } from '@activepieces/shared';
 import { TableTitle } from '../../../../../components/ui/table-title';
 const PlatformPiecesPage = () => {
   const { platform } = platformHooks.useCurrentPlatform();
-  const isEnabled = platform.managePiecesEnabled;
+  const { data: edition } = flagsHooks.useFlag<ApEdition>(ApFlagId.EDITION);
+  // In CE edition, we always enable piece management
+  // If edition is still loading (undefined), assume it's enabled for CE
+  const isEnabled = !edition || edition === ApEdition.COMMUNITY ? true : platform.managePiecesEnabled;
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('name') ?? '';
   const {
@@ -41,7 +44,6 @@ const PlatformPiecesPage = () => {
     includeTags: true,
     includeHidden: true,
   });
-  const { data: edition } = flagsHooks.useFlag<ApEdition>(ApFlagId.EDITION);
   const { refetch: refetchPiecesClientIdsMap } =
     oauth2AppsHooks.usePieceToClientIdMap(platform.cloudAuthEnabled, edition!);
   const columns: ColumnDef<RowDataWithActions<PieceMetadataModelSummary>>[] =
@@ -182,23 +184,26 @@ const PlatformPiecesPage = () => {
             }
           />
         )}
-        <div className="mb-4 flex">
-          <TableTitle>{t('Pieces')}</TableTitle>
-          <div className="ml-auto">
-            <div className="flex gap-3">
-              <ApplyTags
-                selectedPieces={selectedPieces}
-                onApplyTags={() => {
-                  refetchPieces();
-                }}
-              ></ApplyTags>
-              <SyncPiecesButton />
-              <InstallPieceDialog
-                onInstallPiece={() => refetchPieces()}
-                scope={PieceScope.PLATFORM}
-              />
+        <div className="mb-4">
+          <div className="flex mb-4">
+            <TableTitle>{t('Pieces')}</TableTitle>
+            <div className="ml-auto">
+              <div className="flex gap-3">
+                <ApplyTags
+                  selectedPieces={selectedPieces}
+                  onApplyTags={() => {
+                    refetchPieces();
+                  }}
+                ></ApplyTags>
+                <SyncPiecesButton />
+                <InstallPieceDialog
+                  onInstallPiece={() => refetchPieces()}
+                  scope={PieceScope.PLATFORM}
+                />
+              </div>
             </div>
           </div>
+          <SyncPiecesButton />
         </div>
         <DataTable
           columns={columns}

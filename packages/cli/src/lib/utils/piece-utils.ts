@@ -103,14 +103,14 @@ export async function publishPieceFromFolder(
                     process.exit(1);
                 }
             } else {
-                console.error(chalk.red(`Unexpected error: ${error.message}`));
+                console.error(chalk.red(`Unexpected error: ${(error as Error).message}`));
                 if (failOnError) {
                     console.info(chalk.yellow(`Terminating process due to unexpected error for piece '${packageJson.name}' (fail-on-error is enabled)`));
                     process.exit(1);
                 }
             }
         } else {
-            console.error(chalk.red(`Unexpected error: ${error.message}`));
+            console.error(chalk.red(`Unexpected error: ${(error as Error).message}`));
             if (failOnError) {
               console.info(chalk.yellow(`Terminating process due to unexpected error for piece '${packageJson.name}' (fail-on-error is enabled)`));
               process.exit(1);

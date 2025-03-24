@@ -7,6 +7,7 @@ import {
   Users,
   Wrench,
 } from 'lucide-react';
+import { cmPlatformProjectsSidebarItem } from '@/ce/platform/projects/cm-platform-projects-sidebar-item';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -61,6 +62,7 @@ export function PlatformAdminContainer({
       icon: Users,
       isSubItem: false,
     },
+    cmPlatformProjectsSidebarItem,
     {
       type: 'group',
       label: t('Setup'),

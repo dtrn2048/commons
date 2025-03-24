@@ -19,30 +19,29 @@ const syncMode = system.get<PieceSyncMode>(AppSystemProp.PIECES_SYNC_MODE)
 
 export const pieceSyncService = (log: FastifyBaseLogger) => ({
     async setup(): Promise<void> {
-        if (syncMode !== PieceSyncMode.OFFICIAL_AUTO) {
-            log.info('Piece sync service is disabled')
-            return
-        }
+        // Register the sync job handler regardless of syncMode setting
         systemJobHandlers.registerJobHandler(SystemJobName.PIECES_SYNC, async function syncPiecesJobHandler(): Promise<void> {
             await pieceSyncService(log).sync()
         })
-        await pieceSyncService(log).sync()
-        await systemJobsSchedule(log).upsertJob({
-            job: {
-                name: SystemJobName.PIECES_SYNC,
-                data: {},
-            },
-            schedule: {
-                type: 'repeated',
-                cron: '0 */1 * * *',
-            },
-        })
+        
+        // Only automatically sync and set up recurring sync if OFFICIAL_AUTO is enabled
+        if (syncMode === PieceSyncMode.OFFICIAL_AUTO) {
+            await pieceSyncService(log).sync()
+            await systemJobsSchedule(log).upsertJob({
+                job: {
+                    name: SystemJobName.PIECES_SYNC,
+                    data: {},
+                },
+                schedule: {
+                    type: 'repeated',
+                    cron: '0 */1 * * *',
+                },
+            })
+        } else {
+            log.info('Automatic piece sync service is disabled, but manual sync is still available')
+        }
     },
     async sync(): Promise<void> {
-        if (syncMode !== PieceSyncMode.OFFICIAL_AUTO) {
-            log.info('Piece sync service is disabled')
-            return
-        }
         try {
             log.info({ time: dayjs().toISOString() }, 'Syncing pieces')
             const pieces = await listPieces()

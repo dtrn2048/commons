@@ -39,6 +39,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ProjectSwitcher } from '@/features/projects/components/project-switcher';
+import { CmPlatformProjectSwitcher } from '@/ce/platform/projects/components/cm-platform-project-switcher';
 import { useAuthorization } from '@/hooks/authorization-hooks';
 import { flagsHooks } from '@/hooks/flags-hooks';
 import { cn, determineDefaultRoute } from '@/lib/utils';
@@ -177,7 +178,7 @@ export function SidebarComponent({
                 <div className="flex items-center justify-center">
                   <Link
                     to={isHomeDashboard ? defaultRoute : '/platform'}
-                    className="h-[48px] flex items-center justify-center"
+                    className="h-[35px] flex items-center justify-center"
                   >
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -187,9 +188,9 @@ export function SidebarComponent({
                             <img
                               src={branding.logos.fullLogoUrl}
                               alt={t('home')}
-                              width={160}
-                              height={36}
-                              className="p-2 rounded-lg"
+                            width={70}
+                            height={70}
+                            className="p-2 rounded-lg mx-auto"
                             />
                           </Button>
                         ) : (
@@ -205,7 +206,11 @@ export function SidebarComponent({
                       <TooltipContent side="bottom">{t('Home')}</TooltipContent>
                     </Tooltip>
                   </Link>
-                  <ProjectSwitcher />
+                  {edition === ApEdition.COMMUNITY ? (
+                    <CmPlatformProjectSwitcher />
+                  ) : (
+                    <ProjectSwitcher />
+                  )}
                 </div>
               </SidebarHeader>
               <SidebarContent className="gap-0">
